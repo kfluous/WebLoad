@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.kfluous.webload.domain.FileRec" table="file_rec" schema="fileload">
+        <id name="fileId" column="fileId"/>
+        <property name="fileName" column="fileName"/>
+        <property name="filesize" column="filesize"/>
+        <property name="fileClass" column="fileClass"/>
+        <property name="filePath" column="filePath"/>
+        <property name="auther" column="auther"/>
+        <property name="date" column="date"/>
+    </class>
+</hibernate-mapping>

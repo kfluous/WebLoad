@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <!-- 扫描包-->
+    <context:component-scan base-package="com.kfluous"></context:component-scan>
+    <!--自动bean，加了@Controller，@Repository，@Service注解的类-->
+    <context:annotation-config />
+
+    <!--加载数据库配置文件 -->
+    <context:property-placeholder location="classpath*:db.properties"/>
+
+    <!-- 配置C3P0连接池-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!-- 数据库连接信息 4项 -->
+        <property name="user" value="${user}"></property>
+        <property name="password" value="${password}"></property>
+        <property name="driverClass" value="${driverClass}"></property>
+        <property name="jdbcUrl" value="${jdbcUrl}"></property>
+
+        <!-- 其他配置 -->
+        <!-- 初始化连接池中的连接数，取值应在minPoolSize与maxPoolSize之间，默认为3-->
+        <property name="initialPoolSize" value="2"></property>
+        <!--连接池中保留的最大连接数。默认值: 15 -->
+        <property name="maxPoolSize" value="20"></property>
+        <!-- 连接池中保留的最小连接数，默认为：3-->
+        <property name="minPoolSize" value="2"></property>
+        <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 -->
+        <property name="acquireIncrement" value="2"></property>
+        <!--最大空闲时间，60秒内未使用则连接被丢弃。若为0则永不丢弃。默认值: 0 -->
+        <property name="maxIdleTime" value="60"></property>
+        <!--每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 -->
+        <property name="idleConnectionTestPeriod" value="60"></property>
+
+        <!-- 当连接池连接耗尽时，客户端调用getConnection()后等待获取新连接的时间，超时后将抛出SQLException，如设为0则无限期等待。单位毫秒。默认: 0 -->
+        <property name="checkoutTimeout" value="3000"/>
+        <!--重新尝试的时间间隔，默认为：1000毫秒-->
+        <property name="acquireRetryDelay" value="1000" />
+    </bean>
+
+
+
+
+    <!--SessionFactory-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
+    </bean>
+
+    <!-- 配置声明式事务管理（采用注解的方式） 需要指定事务名称 -->
+    <bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+
+    <!-- 动态代理、支持@Transactional（readOnly=false） -->
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+
+    <!--<tx:advice  id="txAdvice" transaction-manager="txManager">-->
+        <!--<tx:attributes>-->
+            <!--&lt;!&ndash; all methods starting with 'get' are read-only &ndash;&gt;-->
+            <!--<tx:method name="queryByUsername" read-only="true"/>-->
+            <!--&lt;!&ndash; other methods use the default transaction settings (see below) &ndash;&gt;-->
+            <!--<tx:method name="*" />-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+</beans>

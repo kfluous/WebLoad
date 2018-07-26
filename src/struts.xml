@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+    <constant name="struts.multipart.maxSize" value="1000000001"/>
+
+    <package name="com.kfluous.webload" extends="struts-default">
+        <action name="upload" class="com.kfluous.webload.action.FileAction" method="upload">
+            <result name="error">error.jsp</result>
+            <result name="success" type="redirectAction">achieve</result>
+        </action>
+        <action name="achieve" class="com.kfluous.webload.action.FileAction" method="UserAchieve">
+            <result name="userlist">list.jsp</result>
+        </action>
+
+        <action name="delete_file" class="com.kfluous.webload.action.FileAction" method="delete_file">
+            <result name="success" type="redirectAction">achieve</result>
+            <result name="error" type="redirect">error.jsp</result>
+        </action>
+
+        <action name="login" class="com.kfluous.webload.action.UserAction" method="login">
+            <result name="toIndex" type="redirectAction">toAchieve</result>
+            <result name="AccountNotFound" type="redirect">login.jsp</result>
+        </action>
+
+        <action name="logout" class="com.kfluous.webload.action.UserAction" method="logout">
+            <result name="success" type="redirect">login.jsp</result>
+        </action>
+
+        <action name="change_pwd" class="com.kfluous.webload.action.UserAction" method="changePwd">
+            <result name="success" type="redirectAction">toAchieve</result>
+        </action>
+
+        <action name="toAchieve" class="com.kfluous.webload.action.ProjectAction" method="toAchieve">
+            <result name="toAchieve" >index.jsp</result>
+        </action>
+
+        <action name="achieveAll" class="com.kfluous.webload.action.ProjectAction" method="achieveAll">
+            <result name="achieveAll" >admin.jsp</result>
+        </action>
+
+        <action name="classlist" class="com.kfluous.webload.action.FileAction" method="ClassAchieve">
+            <result name="classlist" type="chain">achieveAll</result>
+        </action>
+
+        <action name="StuNoFIle" class="com.kfluous.webload.action.FileAction" method="StuNoFIle">
+            <result name="StuNoFIle" type="chain">classlist</result>
+        </action>
+
+        <action name="loginUI">
+            <result>login.jsp</result>
+        </action>
+    </package>
+</struts>
